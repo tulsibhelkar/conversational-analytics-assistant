@@ -1,79 +1,112 @@
 # Conversational Analytics Assistant
 
-Ask a business question in plain English ("Which region had the highest revenue?") and get back the SQL query, a chart, and a short auto-generated insight — instead of digging through a static dashboard.
+A natural-language analytics application that allows users to ask business questions about sales data and receive SQL results, interactive visualizations, and concise business insights.
 
+## Demo
 
-## How it works
+**Business Question → SQL Query → Analysis → Visualization → Business Insight**
 
-1. Sample retail sales data is generated and loaded into a local SQLite DB.
-2. User types a question → `nl_to_sql.py` converts it to a SQL `SELECT` query.
-   - If an `ANTHROPIC_API_KEY` is set,
-   - Otherwise a small rule-based keyword matcher handles common question types, so the app still works with no API key / no internet.
-3. The generated SQL is checked (`is_safe_sql`) so only read-only `SELECT` statements can ever run — no chance of the LLM writing something destructive.
-4. The query runs, results come back as a chart (bar/line depending on the data shape) + a table.
-5. `insights.py` generates a 1-2 line written insight under the chart, same LLM-or-fallback pattern.
+[▶ Watch Demo Video](demo/Conversational_Analytics_Assistant_Demo.mp4)
 
-## Folder structure
+## Overview
 
-```
+The Conversational Analytics Assistant provides a simple way to explore sales data using plain-English business questions.
+
+Instead of manually writing SQL queries or navigating multiple dashboard filters, users can ask questions such as:
+
+- Which region has the highest revenue?
+- What are the top 5 best-selling products?
+- Show me the monthly revenue trend.
+- How does discount percentage affect average revenue?
+
+The application converts supported questions into read-only SQL queries, executes them against a SQLite sales database, and presents the results through interactive visualizations, tables, and business insights.
+
+## Key Features
+
+- Natural-language business queries
+- SQL query generation
+- Read-only SQL execution
+- SQL safety validation
+- Interactive Plotly visualizations
+- Query result tables
+- Business insight generation
+- Regional sales analysis
+- Product and category analysis
+- Customer segment analysis
+- Monthly revenue trend analysis
+- Discount impact analysis
+
+## Technology Stack
+
+| Technology | Purpose |
+|---|---|
+| Python | Application and analytics logic |
+| Streamlit | Interactive web application |
+| SQLite | Relational database |
+| SQL | Data querying and analysis |
+| Pandas | Data processing |
+| NumPy | Synthetic data generation |
+| Plotly | Interactive visualizations |
+
+## Dataset
+
+The project uses a synthetic retail sales dataset containing approximately 4,000 records.
+
+### Key Fields
+
+- Order ID
+- Order Date
+- Customer ID
+- Customer Segment
+- Region
+- Category
+- Product
+- Quantity
+- Unit Price
+- Discount Percentage
+- Revenue
+
+## Analytics Covered
+
+- Total revenue analysis
+- Revenue by region
+- Revenue by category
+- Product performance
+- Top-selling products
+- Customer segment analysis
+- Monthly revenue trends
+- Discount and revenue analysis
+
+## Workflow
+
+```text
+Business Question
+        ↓
+Natural Language Processing
+        ↓
+SQL Query Generation
+        ↓
+SQL Safety Validation
+        ↓
+SQLite Database
+        ↓
+Data Analysis
+        ↓
+Visualization + Business Insight
+
+```text
 conversational-analytics-assistant/
-├── app.py              # Streamlit app (the UI)
-├── nl_to_sql.py         # question -> SQL logic + safety check
-├── insights.py          # result -> written insight logic
-├── db_setup.py           # loads CSV into SQLite
-├── data/
-│   ├── generate_data.py  # creates the sample dataset
-│   └── sales_data.csv    # generated sample data (4000 orders, 2023-2025)
+│
+├── app.py
+├── nl_to_sql.py
+├── insights.py
+├── db_setup.py
 ├── requirements.txt
-├── .env.example
-└── README.md
-```
-
-## Setup & run
-
-```bash
-# 1. clone / unzip this folder, then cd into it
-cd conversational-analytics-assistant
-
-# 2. create a virtual environment (optional but recommended)
-python -m venv venv
-source venv/bin/activate      # Windows: venv\Scripts\activate
-
-# 3. install dependencies
-pip install -r requirements.txt
-
-# 4. (optional) enable full LLM mode
-cp .env.example .env
-# edit .env and paste your ANTHROPIC_API_KEY
-# skip this step and the app just runs on the rule-based fallback
-
-# 5. generate the sample data (already included, only needed if you want to regenerate)
-python data/generate_data.py
-
-# 6. build the database
-python db_setup.py
-
-# 7. launch the app
-streamlit run app.py
-```
-
-Then open the local URL Streamlit prints (usually `http://localhost:8501`).
-
-## Try asking
-
-- "Which region has the highest revenue?"
-- "What are the top 5 best-selling products?"
-- "Show me the monthly revenue trend"
-- "How does discount percentage affect average revenue?"
-- "Revenue breakdown by customer segment"
-
-## Notes / things I'd improve with more time
-
-- Rule-based fallback only covers ~7 question patterns — real LLM mode handles anything.
-- Swap SQLite for Postgres/MySQL by changing the connection in `db_setup.py` / `app.py` if using a bigger dataset.
-- Could add query result caching so repeated questions don't re-hit the DB.
-- Chart-type selection is a simple heuristic right now (date column → line, else bar) — could be smarter.
-
-## Resume line
-
-> Built an LLM-powered natural language analytics assistant that converts plain-English business questions into SQL, executes them safely, and auto-generates written insights — reducing ad-hoc reporting turnaround.
+├── README.md
+│
+├── demo/
+│   └── Conversational_Analytics_Assistant_Demo.mp4
+│
+└── data/
+    ├── generate_data.py
+    └── sales_data.csv
